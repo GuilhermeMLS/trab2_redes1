@@ -6,7 +6,7 @@
 #define DATA_SIZE (11)
 unsigned int size, data_size;
 
-
+// "011001" -> data[1]=1 , data[2]=0  data[3]=0 1 1 0 
 int encodeHamming(char* data, char* out);
 int decodeHamming(char* in, char* data);
 
