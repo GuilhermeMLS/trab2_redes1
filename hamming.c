@@ -2,9 +2,6 @@
 #include <stdlib.h>
 
 
-
-#define SIZE (15)
-#define DATA_SIZE 11
 unsigned int size, data_size;
 int main(int argc, char *argv[])
 {
