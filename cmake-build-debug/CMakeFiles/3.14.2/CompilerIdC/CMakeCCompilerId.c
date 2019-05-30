@@ -50,7 +50,7 @@
 # define COMPILER_ID "Embarcadero"
 # define COMPILER_VERSION_MAJOR HEX(__CODEGEARC_VERSION__>>24 & 0x00FF)
 # define COMPILER_VERSION_MINOR HEX(__CODEGEARC_VERSION__>>16 & 0x00FF)
-# define COMPILER_VERSION_PATCH DEC(__CODEGEARC_VERSION__     & 0xFFFF)
+# define COMPILER_VERSION_PATCH DEC(__CODEGEARC_VERSION__	 & 0xFFFF)
 
 #elif defined(__BORLANDC__)
 # define COMPILER_ID "Borland"
@@ -82,12 +82,12 @@
    /* __SUNPRO_C = 0xVRRP */
 #  define COMPILER_VERSION_MAJOR HEX(__SUNPRO_C>>12)
 #  define COMPILER_VERSION_MINOR HEX(__SUNPRO_C>>4 & 0xFF)
-#  define COMPILER_VERSION_PATCH HEX(__SUNPRO_C    & 0xF)
+#  define COMPILER_VERSION_PATCH HEX(__SUNPRO_C	& 0xF)
 # else
    /* __SUNPRO_CC = 0xVRP */
 #  define COMPILER_VERSION_MAJOR HEX(__SUNPRO_C>>8)
 #  define COMPILER_VERSION_MINOR HEX(__SUNPRO_C>>4 & 0xF)
-#  define COMPILER_VERSION_PATCH HEX(__SUNPRO_C    & 0xF)
+#  define COMPILER_VERSION_PATCH HEX(__SUNPRO_C	& 0xF)
 # endif
 
 #elif defined(__HP_cc)
@@ -95,14 +95,14 @@
   /* __HP_cc = VVRRPP */
 # define COMPILER_VERSION_MAJOR DEC(__HP_cc/10000)
 # define COMPILER_VERSION_MINOR DEC(__HP_cc/100 % 100)
-# define COMPILER_VERSION_PATCH DEC(__HP_cc     % 100)
+# define COMPILER_VERSION_PATCH DEC(__HP_cc	 % 100)
 
 #elif defined(__DECC)
 # define COMPILER_ID "Compaq"
   /* __DECC_VER = VVRRTPPPP */
 # define COMPILER_VERSION_MAJOR DEC(__DECC_VER/10000000)
 # define COMPILER_VERSION_MINOR DEC(__DECC_VER/100000  % 100)
-# define COMPILER_VERSION_PATCH DEC(__DECC_VER         % 10000)
+# define COMPILER_VERSION_PATCH DEC(__DECC_VER		 % 10000)
 
 #elif defined(__IBMC__) && defined(__COMPILER_VER__)
 # define COMPILER_ID "zOS"
@@ -115,7 +115,7 @@
    /* __IBMC__ = VRP */
 #  define COMPILER_VERSION_MAJOR DEC(__IBMC__/100)
 #  define COMPILER_VERSION_MINOR DEC(__IBMC__/10 % 10)
-#  define COMPILER_VERSION_PATCH DEC(__IBMC__    % 10)
+#  define COMPILER_VERSION_PATCH DEC(__IBMC__	% 10)
 # endif
 
 
@@ -130,7 +130,7 @@
    /* __IBMC__ = VRP */
 #  define COMPILER_VERSION_MAJOR DEC(__IBMC__/100)
 #  define COMPILER_VERSION_MINOR DEC(__IBMC__/10 % 10)
-#  define COMPILER_VERSION_PATCH DEC(__IBMC__    % 10)
+#  define COMPILER_VERSION_PATCH DEC(__IBMC__	% 10)
 # endif
 
 
@@ -145,7 +145,7 @@
    /* __IBMC__ = VRP */
 #  define COMPILER_VERSION_MAJOR DEC(__IBMC__/100)
 #  define COMPILER_VERSION_MINOR DEC(__IBMC__/10 % 10)
-#  define COMPILER_VERSION_PATCH DEC(__IBMC__    % 10)
+#  define COMPILER_VERSION_PATCH DEC(__IBMC__	% 10)
 # endif
 
 
@@ -167,7 +167,7 @@
   /* __TI_COMPILER_VERSION__ = VVVRRRPPP */
 # define COMPILER_VERSION_MAJOR DEC(__TI_COMPILER_VERSION__/1000000)
 # define COMPILER_VERSION_MINOR DEC(__TI_COMPILER_VERSION__/1000   % 1000)
-# define COMPILER_VERSION_PATCH DEC(__TI_COMPILER_VERSION__        % 1000)
+# define COMPILER_VERSION_PATCH DEC(__TI_COMPILER_VERSION__		% 1000)
 
 #elif defined(__FUJITSU) || defined(__FCC_VERSION) || defined(__fcc_version)
 # define COMPILER_ID "Fujitsu"
@@ -178,7 +178,7 @@
 # ifdef __GHS_VERSION_NUMBER
 # define COMPILER_VERSION_MAJOR DEC(__GHS_VERSION_NUMBER / 100)
 # define COMPILER_VERSION_MINOR DEC(__GHS_VERSION_NUMBER / 10 % 10)
-# define COMPILER_VERSION_PATCH DEC(__GHS_VERSION_NUMBER      % 10)
+# define COMPILER_VERSION_PATCH DEC(__GHS_VERSION_NUMBER	  % 10)
 # endif
 
 #elif defined(__TINYC__)
@@ -196,12 +196,12 @@
   /* __ARMCC_VERSION = VRRPPPP */
   # define COMPILER_VERSION_MAJOR DEC(__ARMCC_VERSION/1000000)
   # define COMPILER_VERSION_MINOR DEC(__ARMCC_VERSION/10000 % 100)
-  # define COMPILER_VERSION_PATCH DEC(__ARMCC_VERSION     % 10000)
+  # define COMPILER_VERSION_PATCH DEC(__ARMCC_VERSION	 % 10000)
 #else
   /* __ARMCC_VERSION = VRPPPP */
   # define COMPILER_VERSION_MAJOR DEC(__ARMCC_VERSION/100000)
   # define COMPILER_VERSION_MINOR DEC(__ARMCC_VERSION/10000 % 10)
-  # define COMPILER_VERSION_PATCH DEC(__ARMCC_VERSION    % 10000)
+  # define COMPILER_VERSION_PATCH DEC(__ARMCC_VERSION	% 10000)
 #endif
 
 
@@ -251,10 +251,10 @@
 # define COMPILER_VERSION_MINOR DEC(_MSC_VER % 100)
 # if defined(_MSC_FULL_VER)
 #  if _MSC_VER >= 1400
-    /* _MSC_FULL_VER = VVRRPPPPP */
+	/* _MSC_FULL_VER = VVRRPPPPP */
 #   define COMPILER_VERSION_PATCH DEC(_MSC_FULL_VER % 100000)
 #  else
-    /* _MSC_FULL_VER = VVRRPPPP */
+	/* _MSC_FULL_VER = VVRRPPPP */
 #   define COMPILER_VERSION_PATCH DEC(_MSC_FULL_VER % 10000)
 #  endif
 # endif
@@ -295,7 +295,7 @@
   /* SDCC = VRP */
 #  define COMPILER_VERSION_MAJOR DEC(SDCC/100)
 #  define COMPILER_VERSION_MINOR DEC(SDCC/10 % 10)
-#  define COMPILER_VERSION_PATCH DEC(SDCC    % 10)
+#  define COMPILER_VERSION_PATCH DEC(SDCC	% 10)
 # endif
 
 #elif defined(_SGI_COMPILER_VERSION) || defined(_COMPILER_VERSION)
@@ -304,12 +304,12 @@
   /* _SGI_COMPILER_VERSION = VRP */
 #  define COMPILER_VERSION_MAJOR DEC(_SGI_COMPILER_VERSION/100)
 #  define COMPILER_VERSION_MINOR DEC(_SGI_COMPILER_VERSION/10 % 10)
-#  define COMPILER_VERSION_PATCH DEC(_SGI_COMPILER_VERSION    % 10)
+#  define COMPILER_VERSION_PATCH DEC(_SGI_COMPILER_VERSION	% 10)
 # else
   /* _COMPILER_VERSION = VRP */
 #  define COMPILER_VERSION_MAJOR DEC(_COMPILER_VERSION/100)
 #  define COMPILER_VERSION_MINOR DEC(_COMPILER_VERSION/10 % 10)
-#  define COMPILER_VERSION_PATCH DEC(_COMPILER_VERSION    % 10)
+#  define COMPILER_VERSION_PATCH DEC(_COMPILER_VERSION	% 10)
 # endif
 
 
@@ -529,18 +529,18 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 #endif
 
 /* Convert integer to decimal digit literals.  */
-#define DEC(n)                   \
+#define DEC(n)				   \
   ('0' + (((n) / 10000000)%10)), \
   ('0' + (((n) / 1000000)%10)),  \
   ('0' + (((n) / 100000)%10)),   \
-  ('0' + (((n) / 10000)%10)),    \
-  ('0' + (((n) / 1000)%10)),     \
-  ('0' + (((n) / 100)%10)),      \
-  ('0' + (((n) / 10)%10)),       \
+  ('0' + (((n) / 10000)%10)),	\
+  ('0' + (((n) / 1000)%10)),	 \
+  ('0' + (((n) / 100)%10)),	  \
+  ('0' + (((n) / 10)%10)),	   \
   ('0' +  ((n) % 10))
 
 /* Convert integer to hex digit literals.  */
-#define HEX(n)             \
+#define HEX(n)			 \
   ('0' + ((n)>>28 & 0xF)), \
   ('0' + ((n)>>24 & 0xF)), \
   ('0' + ((n)>>20 & 0xF)), \
@@ -548,7 +548,7 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
   ('0' + ((n)>>12 & 0xF)), \
   ('0' + ((n)>>8  & 0xF)), \
   ('0' + ((n)>>4  & 0xF)), \
-  ('0' + ((n)     & 0xF))
+  ('0' + ((n)	 & 0xF))
 
 /* Construct a string literal encoding the version number components. */
 #ifdef COMPILER_VERSION_MAJOR
@@ -561,7 +561,7 @@ char const info_version[] = {
 #  ifdef COMPILER_VERSION_PATCH
    '.', COMPILER_VERSION_PATCH,
 #   ifdef COMPILER_VERSION_TWEAK
-    '.', COMPILER_VERSION_TWEAK,
+	'.', COMPILER_VERSION_TWEAK,
 #   endif
 #  endif
 # endif
@@ -588,7 +588,7 @@ char const info_simulate_version[] = {
 #  ifdef SIMULATE_VERSION_PATCH
    '.', SIMULATE_VERSION_PATCH,
 #   ifdef SIMULATE_VERSION_TWEAK
-    '.', SIMULATE_VERSION_TWEAK,
+	'.', SIMULATE_VERSION_TWEAK,
 #   endif
 #  endif
 # endif

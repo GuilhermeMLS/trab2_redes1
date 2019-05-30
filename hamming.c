@@ -16,8 +16,6 @@ int main(int argc, char *argv[])
 		data_size = DATA_SIZE;
 	}
 
-	unsigned int d;
-	unsigned int *aux_array = calloc(size + 1, sizeof(unsigned int)); //ignorar bit 0
 	char *data = calloc(size + 1, sizeof(char));
 
 	printf("Digite um decimal de até 11 bits\n");
@@ -49,8 +47,7 @@ int main(int argc, char *argv[])
 }
 int encodeHamming(char *data, char *out)
 {
-	int dp = 3, i, nextPot;
-	for (int i = 1, nextPot = 4; dp < SIZE; i++, dp++)
+	for (int i = 1, nextPot = 4, dp=3; dp < size; i++, dp++)
 	{
 		out[dp] = data[i];
 		if (nextPot == (dp + 1))
@@ -70,7 +67,7 @@ int encodeHamming(char *data, char *out)
 	}
 #endif
 	//Calculo dos bits de paridade
-	int pot;
+	
 	for (int i = 0, pot = 1; (1 << i) < size; i++)
 	{
 		pot = 1 << i;
@@ -86,12 +83,12 @@ int encodeHamming(char *data, char *out)
 
 int decodeHamming(char *in, char *data)
 {
+	int error_possition = 0;
 	//bits de paridade
 	int pbits = size - data_size;
 	char *c = calloc((pbits + 1), sizeof(char));
 
 	//Calculo dos bits de paridade
-	int pot;
 	for (int i = 0, pot = 1; (1 << i) < size; i++)
 	{
 		pot = 1 << i;
@@ -111,57 +108,52 @@ int decodeHamming(char *in, char *data)
 		c[0] += c[pbits - i + 1] * (1 << (i - 1));
 	}
 
-	if (c[0] == 0)
+	if (c[0] != 0)
 	{
-		printf("\n Nenhum erro encontrado\n");
-	}
-	else
-	{
-		int posi = 0;
+		#ifdef DEBUG
 		printf("\n Foi encontrado um erro: resultado->");
+		#endif
 		for (int i = 1; i <= pbits; i++)
 		{
 			if (c[i])
-				posi += 1 << i - 1;
+				error_possition += 1 << (i - 1);
+			#ifdef DEBUG
 			printf("%d ", c[i]);
+			#endif
 		}
-		printf("erro na posição %d\n ",posi);
-		in[posi]= in[posi]^1;
+		#ifdef DEBUG
+		printf("erro na posição %d\n ", error_possition);
+		#endif
+		in[error_possition] = in[error_possition] ^ 1;
 	}
+	else
+	{
+		#ifdef DEBUG
+		printf("\n Nenhum erro encontrado\n");
+		#endif
+	}
+	for (int i = 1, nextPot = 4, dp=size; dp < size; i++, dp++)
+	{
+		out[dp] = data[i];
+		if (nextPot == (dp + 1))
+		{
+			dp++;
+			nextPot = nextPot << 1;
+		}
+	}}
 
-	// printf("\n\nEnter received data bits one by one\n");
-	// for(i=0;i<7;i++)
-	//     scanf("%d",&dataatrec[i]);
-
-	// c1=dataatrec[6]^dataatrec[4]^dataatrec[2]^dataatrec[0];
-	// c2=dataatrec[5]^dataatrec[4]^dataatrec[1]^dataatrec[0];
-	// c3=dataatrec[3]^dataatrec[2]^dataatrec[1]^dataatrec[0];
-	// c=c3*4+c2*2+c1 ;
-
-	// if(c==0) {
-	// 	printf("\nNo error while transmission of data\n");
-	// }
-	// else {
-	// 	printf("\nError on position %d",c);
-
-	// 	printf("\nData sent : ");
-	//     for(i=0;i<7;i++)
-	//     	printf("%d",data[i]);
-
-	// 	printf("\nData received : ");
-	//     for(i=0;i<7;i++)
-	//     	printf("%d",dataatrec[i]);
-
-	// 	printf("\nCorrect message is\n");
-
-	// 	//if errorneous bit is 0 we complement it else vice versa
-	// 	if(dataatrec[7-c]==0)
-	// 		dataatrec[7-c]=1;
-	//     else
-	// 		dataatrec[7-c]=0;
-
-	// 	for (i=0;i<7;i++) {
-	// 		printf("%d",dataatrec[i]);
-	// 	}
-	// }
+int setHamming(unsigned int initial_data_size, unsigned int total_size)
+{
+	int range = total_size + 1;
+	int pbits = total_size - data_size;
+	if (range != 1 << (pbits))
+	{
+		return -1;
+	}
+	else
+	{
+		data_size = initial_data_size;
+		size = total_size;
+		return pbits;
+	}
 }
