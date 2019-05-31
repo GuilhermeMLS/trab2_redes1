@@ -79,6 +79,17 @@ void putOnFile(char *fileName){
     fclose(file);
 }
 
+char *invertArray(char *data) {
+    char *inverse;
+    inverse = malloc(12);
+    int n = 11;
+    for (int i = 0; i < 12; i++) {
+        inverse[i] = data[n--];
+    }
+
+    return inverse;
+}
+
 int main () {
     char *string = readFile("teste.txt");
 
@@ -95,31 +106,38 @@ int main () {
 
     //pega de 11 em 11
     FILE * fptr = fopen("string.txt", "r");
-    if (fptr != NULL) {
-
-        char *data;
-        int c;
-        size_t n = 0;
-        data = malloc(12);
-
-        printf("\n\nVetor data[]:\n");
-        while ((c = fgetc(fptr)) != EOF) {
-            data[n++] = (char) c;
-            printf("%c", c);
-        }
-
-        printf("\n");
-
-        printf("\nAqui vai os 11 primeiros bits: ");
-        for (int i = 0; i < 11; i++) {
-            printf("%c",(int) data[i]);
-        }
-    } else {
-        printf("\nerro\n");
+    if (fptr == NULL) {
+        printf("\n Erro ao abrir arquivo \n");
+        return -1;
     }
 
+    char *data;
+    int c;
+    size_t n = 0;
+    data = malloc(12);
 
+    printf("\n\nVetor data[]:\n");
+    while ((c = fgetc(fptr)) != EOF) {
+        data[n++] = (char) c;
+        printf("%c", c);
+    }
 
+    printf("\n");
+
+    printf("\nAqui vai os 11 primeiros bits: ");
+    for (int i = 0; i < 11; i++) {
+        printf("%c",(int) data[i]);
+    }
+
+    char *inverse = invertArray(data);
+
+    printf("\nAqui vai os 11 primeiros bits invertidos: ");
+    for (int i = 1; i < 12; i++) {
+        printf("%c",(int) inverse[i]);
+    }
+
+    //teoricamente, aqui eu envio o inverse[] para codificador hamming
+    // todo: buffer que vai lendo de 11 em 11, invertendo, e mandando pra codificação
 
     return 0 ;
 }
