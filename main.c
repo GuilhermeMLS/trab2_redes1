@@ -149,6 +149,7 @@ int main () {
     // Lê o arquivo string.txt e guarda no vetor data
     // todo: verificar o malloc de data, porque deve ser ali que tá dando problema
     // todo: afinal, o malloc é 12 mas o vetor data é muito maior que isso
+
     FILE * fptr = fopen("string.txt", "r");
     if (fptr == NULL) {
         printf("\n Erro ao abrir arquivo \n");
@@ -199,7 +200,8 @@ int main () {
         for (a = 1; a < 12; a++) {
             printf("%c", (int)inverse[a]);
         }
-        // todo: aqui chama o encode hamming
+
+        // todo: teoricamente, aqui eu envio o array inverse para codificador hamming
 
         printf("\n\n");
         free(data_2);
@@ -242,7 +244,8 @@ int main () {
         printf("%c", (int)inverse[g]);
     }
 
-    //teoricamente, aqui eu envio o inverse[] para codificador hamming
+    // todo: teoricamente, aqui eu envio o array inverse (rebarba) para o codificador hamming
+
     // todo: buffer que vai lendo de 11 em 11, invertendo, e mandando pra codificação
     // todo: uma biblioteca para armazenas as funções e os tipos, .h e .c
     // todo: arrumar o repositório do Git e commitar no remote
