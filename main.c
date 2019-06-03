@@ -163,16 +163,35 @@ int main () {
         free(data_2);
         free(inverse);
     }
-    printf("\nValor de i = %d", i);
+    printf("Valor de i = %d", i);
     /*
      *  Tratar rebarba;
      *  1) completa com zeros até fechar 11 bits
      *  2) inverte eles
      *  3) envia pra codificação como se nada tivesse acontecido
      */
-    printf("\nRebarba:\n");
-    for (i = i; i < n; i++) {
+    printf("\n\nRebarba:\n");
+    // Conta quantos bits falta para fechar 11:
+    int remaining = 11 - (n - i);
+    // Completa com zeros
+    for (int k = n; k < n+remaining; k++) {
+        data[k] = (char)'0';
+    }
+    printf("\nremaining: %d\n", remaining);
+    // Printa a rebarba (data) na tela e transfere para rebarba
+    char *rebarba = malloc(12);
+    int g = 1;
+    for (i = i; i < n+remaining; i++) {
         printf("%c", (int) data[i]);
+        rebarba[g++] = data[i];
+    }
+    // inverte a rebarba
+    inverse = malloc(11);
+    invertArray(rebarba);
+    // printa a rebarba invertida
+    printf("\n");
+    for (g = 1; g < 12; g++) {
+        printf("%c", (int)inverse[g]);
     }
 
     //teoricamente, aqui eu envio o inverse[] para codificador hamming
