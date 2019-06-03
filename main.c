@@ -1,9 +1,46 @@
+/*
+ * Trabalho 2 de Rede de Computadores I - UFPR - Ciência da Computação
+ *ß
+ * Objetivo: receber um texto ASCII como entrada e efetuar a condificação e
+ *  codificação hamming.
+ *
+ * Alunos:
+ *  Guilherme M. Lopes - GRR20163043
+ *  Leonardo Stefan - GRR
+ *
+ * Bugs conhecidos:
+ *  Por algum motivo, provavelmente a alocação de memória do vetor data, algumas vezes o programa
+ *  entrega valores aleatórios que não correspondem com a sequência de bits gerada para
+ *  codificação a partir das strings recebidas. Basta rodar novamente, e geralmente na segunda ou
+ *  terceira tentativa, os valores vêm corretos.
+ *
+ * Debugger:
+ *  Para mensagens de log mais precisas, compilar com -DDEBUG.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
 char *binary_seq[99999];
 int it = 0;
 char *inverse;
+
+// Constantes para mensagens de erro e debug coloridas
+#define RED "\x1B[31m"
+#define MAG "\x1B[35m"
+#define CYN "\x1B[36m"
+#define RESET "\x1B[0m"
+
+// Mensagens de erro ou debugger
+// exemplo de uso: print_message(MAG, "function()", "executando function()");
+// para que as mensagens apareçam, é necessário adicionar -DDEBUG ao comando
+// de compilação.
+void print_message(char *color, char *func, char *message)
+{
+#ifdef DEBUG
+    printf("%s%s: %s%s\n", color, func, RESET, message);
+#endif
+}
 
 typedef union {
     int character;
@@ -88,6 +125,7 @@ void invertArray(char *data) {
 }
 
 int main () {
+    printf("\nLetra = ASCII code = binary code\n\n");
     /*
      * 1) Lê o arquivo
      * 2) guarda transforma os caracteres em bits usando unions
@@ -97,7 +135,7 @@ int main () {
 
     // Mostra a string lida
     if (string != NULL)
-        printf("String lida: %s\n", string);
+        printf("\nString lida: %s\n", string);
 
     // Mostra o vetor binary_seq
     printf("\nVetor binary_seq: \n");
@@ -128,6 +166,7 @@ int main () {
     }
     printf("\n\n");
 
+    printf("Sequência de 11 em 11 bits, com inversão abaixo:\n\n");
     // Aqui imprime a sequência de 11 em 11 bits, mas se sobrar alguma coisa
     // ele não imprime o que sobrou
     int j;
@@ -145,10 +184,13 @@ int main () {
         }
         printf("\n");
         // Imprime o resultado da transferência para data_2
-//        printf("\nTransferência para data_2: ");
-//        for (a = 1; a < 12; a++) {
-//            printf("%c", (int)data_2[a]);
-//        }
+#ifdef DEBUG
+        print_message(MAG, "main()", "Transferência para data_2: ");
+        for (a = 1; a < 12; a++) {
+            printf("%c", (int)data_2[a]);
+        }
+        printf("\n");
+#endif
 
         // Inverte os 11 bits da iteração
         inverse = malloc(11);
@@ -163,21 +205,27 @@ int main () {
         free(data_2);
         free(inverse);
     }
+#ifdef DEBUG
     printf("Valor de i = %d", i);
+#endif
     /*
      *  Tratar rebarba;
      *  1) completa com zeros até fechar 11 bits
      *  2) inverte eles
      *  3) envia pra codificação como se nada tivesse acontecido
      */
+#ifdef DEBUG
     printf("\n\nRebarba:\n");
+#endif
     // Conta quantos bits falta para fechar 11:
     int remaining = 11 - (n - i);
     // Completa com zeros
     for (int k = n; k < n+remaining; k++) {
         data[k] = (char)'0';
     }
+#ifdef DEBUG
     printf("\nremaining: %d\n", remaining);
+#endif
     // Printa a rebarba (data) na tela e transfere para rebarba
     char *rebarba = malloc(12);
     int g = 1;
