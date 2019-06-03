@@ -3,6 +3,7 @@
 
 char *binary_seq[99999];
 int it = 0;
+char *inverse;
 
 typedef union {
     int character;
@@ -79,65 +80,105 @@ void putOnFile(char *fileName){
     fclose(file);
 }
 
-char *invertArray(char *data) {
-    char *inverse;
-    inverse = malloc(12);
+void invertArray(char *data) {
     int n = 11;
-    for (int i = 0; i < 12; i++) {
+    for (int i = 1; i < 12; i++) {
         inverse[i] = data[n--];
     }
-
-    return inverse;
 }
 
 int main () {
+    /*
+     * 1) Lê o arquivo
+     * 2) guarda transforma os caracteres em bits usando unions
+     * 3) preenche o vetor binary_seq com a sequência de bits correspondente
+     */
     char *string = readFile("teste.txt");
 
+    // Mostra a string lida
     if (string != NULL)
         printf("String lida: %s\n", string);
 
-    printf("\nAqui vai o binary_seq:\n");
+    // Mostra o vetor binary_seq
+    printf("\nVetor binary_seq: \n");
     for (int i = 0; i < it; i++) {
         printf("%s", binary_seq[i]);
     }
 
-    //coloca o binary_seq num arquivo:
+    // Coloca o binary_seq num arquivo
     putOnFile("string.txt");
 
-    //pega de 11 em 11
+    // Lê o arquivo string.txt e guarda no vetor data
+    // todo: verificar o malloc de data, porque deve ser ali que tá dando problema
+    // todo: afinal, o malloc é 12 mas o vetor data é muito maior que isso
     FILE * fptr = fopen("string.txt", "r");
     if (fptr == NULL) {
         printf("\n Erro ao abrir arquivo \n");
         return -1;
     }
-
     char *data;
     int c;
     size_t n = 0;
     data = malloc(12);
-
     printf("\n\nVetor data[]:\n");
+    // Mostra/constroi o vetor data
     while ((c = fgetc(fptr)) != EOF) {
         data[n++] = (char) c;
         printf("%c", c);
     }
+    printf("\n\n");
 
-    printf("\n");
+    // Aqui imprime a sequência de 11 em 11 bits, mas se sobrar alguma coisa
+    // ele não imprime o que sobrou
+    int j;
+    int i;
+    int a = 0;
+    char *data_2;
+    for (j = 1; j <= it/11; j++) {
+        // Imprime 11 Bits
+        // printf("\n11 bits: ");
+        data_2 = malloc(12);
+        a = 1;
+        for (i = (j-1)*11; i < j*11; i++) {
+            printf("%c",(int) data[i]);
+            data_2[a++] = data[i];
+        }
+        printf("\n");
+        // Imprime o resultado da transferência para data_2
+//        printf("\nTransferência para data_2: ");
+//        for (a = 1; a < 12; a++) {
+//            printf("%c", (int)data_2[a]);
+//        }
 
-    printf("\nAqui vai os 11 primeiros bits: ");
-    for (int i = 0; i < 11; i++) {
-        printf("%c",(int) data[i]);
+        // Inverte os 11 bits da iteração
+        inverse = malloc(11);
+        invertArray(data_2);
+        //printf("\n11 bits invertidos: ");
+        for (a = 1; a < 12; a++) {
+            printf("%c", (int)inverse[a]);
+        }
+        // todo: aqui chama o encode hamming
+
+        printf("\n\n");
+        free(data_2);
+        free(inverse);
     }
-
-    char *inverse = invertArray(data);
-
-    printf("\nAqui vai os 11 primeiros bits invertidos: ");
-    for (int i = 1; i < 12; i++) {
-        printf("%c",(int) inverse[i]);
+    printf("\nValor de i = %d", i);
+    /*
+     *  Tratar rebarba;
+     *  1) completa com zeros até fechar 11 bits
+     *  2) inverte eles
+     *  3) envia pra codificação como se nada tivesse acontecido
+     */
+    printf("\nRebarba:\n");
+    for (i = i; i < n; i++) {
+        printf("%c", (int) data[i]);
     }
 
     //teoricamente, aqui eu envio o inverse[] para codificador hamming
     // todo: buffer que vai lendo de 11 em 11, invertendo, e mandando pra codificação
+    // todo: uma biblioteca para armazenas as funções e os tipos, .h e .c
+    // todo: arrumar o repositório do Git e commitar no remote
 
     return 0 ;
 }
