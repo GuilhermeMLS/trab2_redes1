@@ -1,6 +1,6 @@
 /*
  * Trabalho 2 de Rede de Computadores I - UFPR - Ciência da Computação
- *ß
+ *
  * Objetivo: receber um texto ASCII como entrada e efetuar a condificação e
  *  codificação hamming.
  *
