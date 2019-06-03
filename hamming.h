@@ -20,7 +20,7 @@ int setHamming(unsigned int initial_data_size, unsigned int total_size);
  * 
  *	data-> vetor tamanho inicial de dados +1(initial_data_size+1) onde : a primeira posição sera desconsiderada, o bit menos significante fica na posição 1 e o mais significante fica em   tamanho inicial de dados
  *			  exemplo "00011001" -> data[initial_data_size+1]= { ? ,1, 0, 0, 1, 1, 0, 0, 0 }
- *	out	-> vetor de tamanho total +1(total_size+1) mesclando os dados com os bits de paridade
+ *	out	-> vetor de tamanho total +1(size+1) mesclando os dados com os bits de paridade
  *
  */
 void encodeHamming(char *data, char *out);
@@ -29,7 +29,7 @@ void encodeHamming(char *data, char *out);
 /*Padrão de entrada
  * Ambos os vetores de entrada devem ser alocados e inicializados antes de chamar a função;
  * 
- *	in	-> vetor de tamanho total +1(total_size+1) mesclando os dados com os bits de paridade
+ *	in	-> vetor de tamanho total +1(size+1) mesclando os dados com os bits de paridade
  *	data-> vetor tamanho inicial de dados +1(initial_data_size+1) onde : a primeira posição sera desconsiderada, o bit menos significante fica na posição 1 e o mais significante fica em   tamanho inicial de dados
  *			  exemplo data[initial_data_size+1]= { ? ,1, 0, 0, 1, 1, 0, 0, 0 } -> "00011001" 
  *  retorno -> inteiro referente a posição do bit errado (desconsiderando bit 0)
