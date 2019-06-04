@@ -379,12 +379,13 @@ int main()
     int outIndex = 0;
     for (int s = 0, f = 0; s < m - size; s += size + 2, f += data_size + 2)
     {
-
         for (int i = 0; i < size; i++)
         {
             todecode[size - i] = string_decode[s + i];
             // printf("%d", string_decode[s + i]);
         }
+        int erro = rand() % size;
+        todecode[erro]^=1;
         decodeHamming(todecode, out2);
         //     fprintf(stdout, " \n ");
         fflush(stdout);
@@ -405,7 +406,7 @@ int main()
 
     printf("\nResultado: \n");
     char debuff = 0;
-    for (int s = 0; outIndex - s >= 8; )
+    for (int s = 0; outIndex - s >= 8;)
     {
         debuff = 0;
         for (int i = 7; i >= 0; i--)
@@ -415,7 +416,7 @@ int main()
             // printf("%d",buffer[head]);
         }
         // printf(" ");
-        printf("%c", debuff);
+        fprintf(final_output,"%c", debuff);
     }
     printf("\n");
     free(string_out);
