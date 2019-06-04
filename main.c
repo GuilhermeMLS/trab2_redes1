@@ -45,7 +45,7 @@ static void out_buffer(char *out)
     char debuff;
     if (buffer == NULL)
     {
-        bSize = 2 * (size > sizeof(char) ? size : sizeof(char));
+        bSize = 4 * (size > sizeof(char) ? size : sizeof(char));
         buffer = calloc(bSize, sizeof(char));
         head = 0;
         tail = 0;
@@ -54,15 +54,16 @@ static void out_buffer(char *out)
     {
         buffer[tail] = out[i];
         tail = (tail + 1) % bSize;
+        // printf("\ntail=%d bSize=%d", tail,)
     }
-    if ((((tail > head) && (tail - head > 8)) || ((tail < head) && (bSize - (head - tail)))))
+    while ((((tail > head) && (tail - head > 8)) || ((tail < head) && (bSize - (head - tail)))))
     {
         debuff = 0;
         for (int i = 7; i >= 0; i--)
         {
             debuff |= (buffer[head]) << i;
             // printf("%d",buffer[head]);
-            head++;
+            head= (head+1)%bSize;
         }
         // printf(" ");
         printf("%c", debuff);
