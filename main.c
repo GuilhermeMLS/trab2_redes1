@@ -33,42 +33,41 @@ char *encoded_array;
 #define CYN "\x1B[36m"
 #define RESET "\x1B[0m"
 
-// Mensagens de erro ou debugger
-// exemplo de uso: print_message(MAG, "function()", "executando function()");
-// para que as mensagens apareçam, é necessário adicionar -DDEBUG ao comando
-// de compilação.
 char *buffer = NULL;
-int bSize=0;
-static void out_buffer(char *out)
-{
+int bSize = 0;
+
+static void out_buffer(char *out, FILE *final_output) {
     static int head, tail;
     char debuff;
-    if (buffer == NULL)
-    {
+    if (buffer == NULL) {
         bSize = 4 * (size > sizeof(char) ? size : sizeof(char));
         buffer = calloc(bSize, sizeof(char));
         head = 0;
         tail = 0;
     }
-    for (int i = data_size; i > 0; i--)
-    {
+    for (int i = data_size; i > 0; i--) {
         buffer[tail] = out[i];
         tail = (tail + 1) % bSize;
         // printf("\ntail=%d bSize=%d", tail,)
     }
-    while ((((tail > head) && (tail - head > 8)) || ((tail < head) && (bSize - (head - tail)))))
-    {
+    while ((((tail > head) && (tail - head > 8)) || ((tail < head) && (bSize - (head - tail))))) {
         debuff = 0;
-        for (int i = 7; i >= 0; i--)
-        {
+        for (int i = 7; i >= 0; i--) {
             debuff |= (buffer[head]) << i;
             // printf("%d",buffer[head]);
             head= (head+1)%bSize;
         }
         // printf(" ");
         printf("%c", debuff);
+
+        fprintf(final_output, "%c", debuff);
     }
 }
+
+// Mensagens de erro ou debugger
+// exemplo de uso: print_message(MAG, "function()", "executando function()");
+// para que as mensagens apareçam, é necessário adicionar -DDEBUG ao comando
+// de compilação.
 void print_message(char *color, char *func, char *message)
 {
 #ifdef DEBUG
@@ -337,6 +336,8 @@ int main()
 
     printf("\nDecodificando..\n");
 
+    FILE *final_output = fopen("final_output.txt", "w+"); // Arquivo com a string final convertida para char de novo
+
     FILE *file_decode = fopen("out_file.txt", "r");
 
     char *string_decode;
@@ -374,7 +375,7 @@ int main()
     //     {
     //         printf("%d",out2[i]);
     //     }
-        out_buffer(out2);
+        out_buffer(out2, final_output);
 
         // string_out[f] = ' ';
     }

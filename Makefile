@@ -9,8 +9,8 @@ main_exe: main.c hamming.o  Makefile
 main_debug: main.c hamming.c  hamming.h Makefile
 	$(CXX) -o main_debug main.c hamming.o $(DEBUG)
 
-hamming: hamming.c  hamming.h Makefile
-	$(CXX) -c hamming.o hamming.c hamming.h $(FLAGS)
+hamming.o: hamming.c  hamming.h Makefile
+	$(CXX) -c hamming.c hamming.h $(FLAGS)
 
 hamming_debug: hamming.c  hamming.h Makefile
 	$(CXX) -o hamming_exe hamming.c hamming.h  $(DEBUG) -DDEBUGEXE
