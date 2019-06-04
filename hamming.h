@@ -8,9 +8,9 @@
 unsigned int size, data_size;
 
 /*O codigo foi feito para aceitar outros formatos de hamming,
-**para usar o especificado para o trabalho basta usar fazer 'setHamming(SIZE,DATA_SIZE).
-**É necessário utilizar essa função antes de inicar as demais funções
-**/
+ *para usar o especificado para o trabalho basta usar fazer 'setHamming(SIZE,DATA_SIZE).
+ *É necessário utilizar essa função antes de inicar as demais funções
+ */
 int setHamming(unsigned int initial_data_size, unsigned int total_size);
 
 // encodeHamming -> Codifica dados em dados com bits de paridade conforme hamming
