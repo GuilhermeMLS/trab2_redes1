@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "hamming.h"
+#include <sys/stat.h>
 
 char *binary_seq[99999];
 int it = 0;
@@ -35,27 +36,42 @@ char *encoded_array;
 
 char *buffer = NULL;
 int bSize = 0;
+long int findSize(const char *file_name)
+{
+    struct stat st; /*declare stat variable*/
 
-static void out_buffer(char *out, FILE *final_output) {
+    /*get the size using stat()*/
+
+    if (stat(file_name, &st) == 0)
+        return (st.st_size);
+    else
+        return -1;
+}
+static void out_buffer(char *out, FILE *final_output)
+{
     static int head, tail;
     char debuff;
-    if (buffer == NULL) {
-        bSize = 4 * (size > sizeof(char) ? size : sizeof(char));
+    if (buffer == NULL)
+    {
+        bSize = 2 * (size > sizeof(char) ? size : sizeof(char));
         buffer = calloc(bSize, sizeof(char));
         head = 0;
         tail = 0;
     }
-    for (int i = data_size; i > 0; i--) {
+    for (int i = data_size; i > 0; i--)
+    {
         buffer[tail] = out[i];
         tail = (tail + 1) % bSize;
         // printf("\ntail=%d bSize=%d", tail,)
     }
-    while ((((tail > head) && (tail - head > 8)) || ((tail < head) && (bSize - (head - tail))))) {
+    while ((((tail > head) && (tail - head > 8)) || ((tail < head) && (bSize - (head - tail)))))
+    {
         debuff = 0;
-        for (int i = 7; i >= 0; i--) {
+        for (int i = 7; i >= 0; i--)
+        {
             debuff |= (buffer[head]) << i;
             // printf("%d",buffer[head]);
-            head= (head+1)%bSize;
+            head = (head + 1) % bSize;
         }
         // printf(" ");
         printf("%c", debuff);
@@ -131,7 +147,7 @@ char *readFile(char *fileName)
     if (file == NULL)
         return NULL; //could not open file
 
-    string = calloc(1000, sizeof(char));
+    string = calloc(findSize(fileName), sizeof(char));
     while ((c = fgetc(file)) != EOF)
     {
         string[n++] = (char)c;
@@ -347,7 +363,7 @@ int main()
     if (file_decode == NULL)
         return 0; //could not open file
 
-    string_decode = calloc(1000, sizeof(char));
+    string_decode = calloc(findSize("out_file.txt"), sizeof(char));
     while ((d = fgetc(file_decode)) != EOF)
     {
         string_decode[m++] = (char)d == '1' ? 1 : 0;
@@ -356,41 +372,50 @@ int main()
     // terminate with the null character
     string_decode[m] = '\0';
 
-
     char *string_out = calloc(m, sizeof(char));
     char *out2 = calloc(size, sizeof(char));
     char *todecode = calloc(size, sizeof(char));
+    char *finalBit = calloc(m, sizeof(char));
+    int outIndex = 0;
     for (int s = 0, f = 0; s < m - size; s += size + 2, f += data_size + 2)
     {
 
         for (int i = 0; i < size; i++)
         {
-            todecode[size-i]=string_decode[s + i];
+            todecode[size - i] = string_decode[s + i];
             // printf("%d", string_decode[s + i]);
         }
         decodeHamming(todecode, out2);
-    //     fprintf(stdout, " \n ");
+        //     fprintf(stdout, " \n ");
         fflush(stdout);
-    //    for (int i = data_size; i >= 0; i--)
-    //     {
-    //         printf("%d",out2[i]);
-    //     }
-        out_buffer(out2, final_output);
+        //    for (int i = data_size; i >= 0; i--)
+        //     {
+        //         printf("%d",out2[i]);
+        //     }
+
+        for (int i = data_size; i > 0; i--)
+        {
+            finalBit[outIndex] = out2[i];
+            outIndex++;
+        }
+        // out_buffer(out2, final_output);
 
         // string_out[f] = ' ';
     }
 
     printf("\nResultado: \n");
-    for (int s = 0; s < (m / 15) * 11; s++)
+    char debuff = 0;
+    for (int s = 0; outIndex - s >= 8; )
     {
-        if (string_out[s] != ' ')
+        debuff = 0;
+        for (int i = 7; i >= 0; i--)
         {
-            // printf("%d", string_out[s]);
+            debuff ^= (finalBit[s]) << i;
+            s++;
+            // printf("%d",buffer[head]);
         }
-        else
-        {
-            printf(" ");
-        }
+        // printf(" ");
+        printf("%c", debuff);
     }
     printf("\n");
     free(string_out);
