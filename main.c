@@ -22,70 +22,34 @@
 #include <stdlib.h>
 #include "hamming.h"
 #include <sys/stat.h>
+#include <ntsid.h>
+#include <time.h>
 
 char *binary_seq[99999];
 int it = 0;
 char *inverse;
 char *encoded_array;
 
-// Constantes para mensagens de erro e debug coloridas
-#define RED "\x1B[31m"
+// Consts to colorful error messages
 #define MAG "\x1B[35m"
-#define CYN "\x1B[36m"
 #define RESET "\x1B[0m"
 
-char *buffer = NULL;
-int bSize = 0;
-long int findSize(const char *file_name)
-{
-    struct stat st; /*declare stat variable*/
-
-    /*get the size using stat()*/
-
-    if (stat(file_name, &st) == 0)
+long int findSize(const char *file_name) {
+    struct stat st;
+    if (stat(file_name, &st) == 0) {
         return (st.st_size);
-    else
+    } else {
         return -1;
-}
-static void out_buffer(char *out, FILE *final_output)
-{
-    static int head, tail;
-    char debuff;
-    if (buffer == NULL)
-    {
-        bSize = 2 * (size > sizeof(char) ? size : sizeof(char));
-        buffer = calloc(bSize, sizeof(char));
-        head = 0;
-        tail = 0;
-    }
-    for (int i = data_size; i > 0; i--)
-    {
-        buffer[tail] = out[i];
-        tail = (tail + 1) % bSize;
-        // printf("\ntail=%d bSize=%d", tail,)
-    }
-    while ((((tail > head) && (tail - head > 8)) || ((tail < head) && (bSize - (head - tail)))))
-    {
-        debuff = 0;
-        for (int i = 7; i >= 0; i--)
-        {
-            debuff |= (buffer[head]) << i;
-            // printf("%d",buffer[head]);
-            head = (head + 1) % bSize;
-        }
-        // printf(" ");
-        printf("%c", debuff);
-
-        fprintf(final_output, "%c", debuff);
     }
 }
 
-// Mensagens de erro ou debugger
-// exemplo de uso: print_message(MAG, "function()", "executando function()");
-// para que as mensagens apareçam, é necessário adicionar -DDEBUG ao comando
-// de compilação.
-void print_message(char *color, char *func, char *message)
-{
+/*
+ * Mensagens de erro ou debugger.
+ *  Exemplo de uso: print_message(MAG, "function()", "executando function()");
+ *  Para que as mensagens apareçam, é necessário adicionar -DDEBUG ao comando
+ *  de compilação.
+*/
+void print_message(char *color, char *func, char *message) {
 #ifdef DEBUG
     printf("%s%s: %s%s\n", color, func, RESET, message);
 #endif
@@ -106,14 +70,15 @@ typedef union {
     } bits;
 } character;
 
-void processChar(char ch)
-{
+void processChar(char ch) {
     // setup the char union
     character cha;
     // convert it to ASCII integer
     int e = ch;
     // set into the union
     cha.character = e;
+
+#ifdef DEBUG
     // print the character and its ASCII equivalent
     printf("%c = %d = ", ch, cha.character);
     // print the value in bits
@@ -126,6 +91,7 @@ void processChar(char ch)
     printf("%d ", cha.bits.bit1);
     printf("%d ", cha.bits.bit0);
     printf("\n");
+#endif
 
     binary_seq[it++] = cha.bits.bit7 ? "1" : "0";
     binary_seq[it++] = cha.bits.bit6 ? "1" : "0";
@@ -137,19 +103,18 @@ void processChar(char ch)
     binary_seq[it++] = cha.bits.bit0 ? "1" : "0";
 }
 
-char *readFile(char *fileName)
-{
+char *readFile(char *fileName) {
     FILE *file = fopen(fileName, "r");
     char *string;
     size_t n = 0;
     int c;
 
-    if (file == NULL)
+    if (file == NULL) {
         return NULL; //could not open file
+    }
 
     string = calloc(findSize(fileName), sizeof(char));
-    while ((c = fgetc(file)) != EOF)
-    {
+    while ((c = fgetc(file)) != EOF) {
         string[n++] = (char)c;
         processChar(c);
     }
@@ -162,76 +127,97 @@ char *readFile(char *fileName)
     return string;
 }
 
-void putOnFile(char *fileName)
-{
+void putOnFile(char *fileName) {
     FILE *file = fopen(fileName, "w");
     for (int i = 0; i < it; i++)
     {
         fputs(binary_seq[i], file);
     }
+
     fclose(file);
 }
 
-void invertArray(char *data)
-{
+void invertArray(char *data) {
     int n = 11;
-    for (int i = 1; i < 12; i++)
-    {
+    for (int i = 1; i < 12; i++) {
         inverse[i] = data[n--];
     }
 }
 
-int main()
-{
+int main(int argc, char *argv[]) {
+    if (argc == 1) {
+        printf("Missing parameters.\n");
+        printf("Usage: ./main_exe input_file.txt\n");
+
+        return 1;
+    }
+
+    printf("\n\n---- CODIFICADOR HAMMING ----\n\n");
+    printf("\n\n Codificando conteúdo de %s", argv[1]);
+    for (int h = 0; h < 3; h++) {
+        printf(".");
+    }
+    printf("\n\n");
+
+
+
     // Set Hamming (11,15)
     setHamming(11, 15);
 
+#ifdef DEBUG
     printf("\nLetra = ASCII code = binary code\n\n");
+#endif
     /*
      * 1) Lê o arquivo
      * 2) guarda transforma os caracteres em bits usando unions
      * 3) preenche o vetor binary_seq com a sequência de bits correspondente
      */
-    char *string = readFile("teste.txt");
+    char *string = readFile(argv[1]);
 
+#ifdef DEBUG
     // Mostra a string lida
-    if (string != NULL)
+    if (string != NULL) {
         printf("\nString lida: %s\n", string);
-
+    }
     // Mostra o vetor binary_seq
     printf("\nVetor binary_seq: \n");
     for (int i = 0; i < it; i++)
     {
         printf("%s", binary_seq[i]);
     }
+#endif
 
     // Coloca o binary_seq num arquivo
     putOnFile("string.txt");
 
-    // Lê o arquivo string.txt e guarda no vetor data
-    // todo: verificar o malloc de data, porque deve ser ali que tá dando problema
-    // todo: afinal, o malloc é 12 mas o vetor data é muito maior que isso
-
     FILE *fptr = fopen("string.txt", "r");
-    if (fptr == NULL)
-    {
+    if (fptr == NULL) {
         printf("\n Erro ao abrir arquivo \n");
         return -1;
     }
+
     char *data;
     int c;
     size_t n = 0;
     data = calloc(data_size + 1, sizeof(char));
-    printf("\n\nVetor data[]:\n");
-    // Mostra/constroi o vetor data
-    while ((c = fgetc(fptr)) != EOF)
-    {
-        data[n++] = (char)c;
-        printf("%c", c);
-    }
-    printf("\n\n");
 
+#ifdef DEBUG
+    printf("\n\nVetor data[]:\n");
+#endif
+
+    // Mostra/constroi o vetor data
+    while ((c = fgetc(fptr)) != EOF) {
+        data[n++] = (char)c;
+#ifdef  DEBUG
+        printf("%c", c);
+#endif
+    }
+
+#ifdef DEBUG
+    printf("\n\n");
     printf("Sequência de 11 em 11 bits, com inversão abaixo:\n\n");
+#endif
+
     // Aqui imprime a sequência de 11 em 11 bits, mas se sobrar alguma coisa
     // ele não imprime o que sobrou
     int j = 0;
@@ -241,23 +227,25 @@ int main()
 
     FILE *out_file = fopen("out_file.txt", "w");
 
-    for (j = 1; j <= it / 11; j++)
-    {
+    for (j = 1; j <= it / 11; j++) {
         // Imprime 11 Bits
-        // printf("\n11 bits: ");
         data_2 = calloc(data_size + 1, sizeof(char));
         a = 1;
-        for (i = (j - 1) * 11; i < j * 11; i++)
-        {
+        for (i = (j - 1) * 11; i < j * 11; i++) {
+#ifdef DEBUG
             printf("%c", (int)data[i]);
+#endif
             data_2[a++] = data[i];
         }
+
+#ifdef DEBUG
         printf("\n");
+#endif
+
         // Imprime o resultado da transferência para data_2
 #ifdef DEBUG
         print_message(MAG, "main()", "Transferência para data_2: ");
-        for (a = 1; a < 12; a++)
-        {
+        for (a = 1; a < 12; a++) {
             printf("%c", (int)data_2[a]);
         }
         printf("\n");
@@ -266,24 +254,31 @@ int main()
         // Inverte os 11 bits da iteração
         inverse = calloc(data_size, sizeof(char));
         invertArray(data_2);
+
+#ifdef DEBUG
         //printf("\n11 bits invertidos: ");
-        for (a = 1; a < 12; a++)
-        {
+        for (a = 1; a < 12; a++) {
             printf("%c", (int)inverse[a]);
         }
+#endif
 
         // Manda para codificação
         encoded_array = calloc(size, sizeof(char));
         encodeHamming(inverse, encoded_array);
 
+#ifdef DEBUG
         printf("\nEncoded array: ");
-        for (a = size; a >= 0; a--)
-        {
+#endif
+
+        for (a = size; a >= 0; a--) {
+#ifdef DEBUG
             printf("%c", (int)encoded_array[a]);
+#endif
             fprintf(out_file, "%c", encoded_array[a]);
         }
-
+#ifdef DEBUG
         printf("\n\n");
+#endif
 
         free(encoded_array);
         free(data_2);
@@ -306,8 +301,7 @@ int main()
     // Conta quantos bits falta para fechar 11:
     int remaining = 11 - (n - i);
     // Completa com zeros
-    for (int k = n; k < n + remaining; k++)
-    {
+    for (int k = n; k < n + remaining; k++) {
         data[k] = (char)'0';
     }
 #ifdef DEBUG
@@ -316,29 +310,36 @@ int main()
     // Printa a rebarba (data) na tela e transfere para rebarba
     char *rebarba = calloc(data_size + 1, sizeof(char));
     int g = 1;
-    for (i = i; i < n + remaining; i++)
-    {
+    for (i = i; i < n + remaining; i++) {
+#ifdef DEBUG
         printf("%c", (int)data[i]);
+#endif
         rebarba[g++] = data[i];
     }
     // inverte a rebarba
     inverse = calloc(data_size, sizeof(char));
     invertArray(rebarba);
+
+#ifdef DEBUG
     // printa a rebarba invertida
     printf("\n");
-    for (g = 1; g < 12; g++)
-    {
+    for (g = 1; g < 12; g++) {
         printf("%c", (int)inverse[g]);
     }
+#endif
 
     // codifica a rebarba
     encoded_array = calloc(size, sizeof(char));
     encodeHamming(inverse, encoded_array);
 
+#ifdef DEBUG
     printf("\nEncoded array: ");
-    for (a = size; a >= 0; a--)
-    {
+#endif
+
+    for (a = size; a >= 0; a--) {
+#ifdef DEBUG
         printf("%c", (int)encoded_array[a]);
+#endif
         fprintf(out_file, "%c", encoded_array[a]);
     }
 
@@ -350,7 +351,11 @@ int main()
 
     fclose(out_file);
 
-    printf("\nDecodificando..\n");
+    printf("\n\n Decodificando");
+    for (int h = 0; h < 3; h++) {
+        printf(".");
+    }
+    printf("\n\n");
 
     FILE *final_output = fopen("final_output.txt", "w+"); // Arquivo com a string final convertida para char de novo
 
@@ -360,68 +365,57 @@ int main()
     size_t m = 0;
     int d;
 
-    if (file_decode == NULL)
+    if (file_decode == NULL) {
         return 0; //could not open file
+    }
 
     string_decode = calloc(findSize("out_file.txt"), sizeof(char));
-    while ((d = fgetc(file_decode)) != EOF)
-    {
+    while ((d = fgetc(file_decode)) != EOF) {
         string_decode[m++] = (char)d == '1' ? 1 : 0;
     }
 
     // terminate with the null character
     string_decode[m] = '\0';
 
+    // DECODIFICAÇÃO
+
     char *string_out = calloc(m, sizeof(char));
     char *out2 = calloc(size, sizeof(char));
     char *todecode = calloc(size, sizeof(char));
     char *finalBit = calloc(m, sizeof(char));
     int outIndex = 0;
-    for (int s = 0, f = 0; s < m - size; s += size + 2, f += data_size + 2)
-    {
-        for (int i = 0; i < size; i++)
-        {
+    for (int s = 0, f = 0; s < m - size; s += size + 2, f += data_size + 2) {
+        for (int i = 0; i < size; i++) {
             todecode[size - i] = string_decode[s + i];
-            // printf("%d", string_decode[s + i]);
         }
-        int erro = rand() % size;
-        todecode[erro]^=1;
-        decodeHamming(todecode, out2);
-        //     fprintf(stdout, " \n ");
-        fflush(stdout);
-        //    for (int i = data_size; i >= 0; i--)
-        //     {
-        //         printf("%d",out2[i]);
-        //     }
 
-        for (int i = data_size; i > 0; i--)
-        {
+        // Provoca um erro aleatório
+        int erro = rand() % size;
+        todecode[erro] ^= 1;
+        decodeHamming(todecode, out2);
+        fflush(stdout);
+
+        for (int i = data_size; i > 0; i--) {
             finalBit[outIndex] = out2[i];
             outIndex++;
         }
-        // out_buffer(out2, final_output);
-
-        // string_out[f] = ' ';
     }
 
-    printf("\nResultado: \n");
     char debuff = 0;
-    for (int s = 0; outIndex - s >= 8;)
-    {
+    for (int s = 0; outIndex - s >= 8;) {
         debuff = 0;
-        for (int i = 7; i >= 0; i--)
-        {
+        for (int i = 7; i >= 0; i--) {
             debuff ^= (finalBit[s]) << i;
             s++;
-            // printf("%d",buffer[head]);
         }
-        // printf(" ");
         fprintf(final_output,"%c", debuff);
     }
+
     printf("\n");
     free(string_out);
     free(string_decode);
 
+    printf("\n\nSaída gerada no arquivo final_output.txt.\n\n");
     fclose(file_decode);
 
     return 0;
